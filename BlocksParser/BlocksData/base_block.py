@@ -27,6 +27,25 @@ class BlockExtension:
             self.failed_to_load = True
 
 
+class BlockArg:
+    def __init__(self, block_type):
+        self.block_type = block_type
+
+
+class BlockArgs:
+    def __init__(self, args):
+        pass
+
+        
+    def get(self):
+        args = []
+        for block in self.args:
+            args.append(block.get())
+        return self.logic(args)
+
+
+
+
 class BlockInfo:
     def __init__(self, name: str, byte_code: List[int],
                  constants: List[Union[str, int, bool, List[str, int, bool, List[...], Dict[str, ...]], Dict[
@@ -38,7 +57,10 @@ class BlockInfo:
         self.extensions = extensions
 
 
-class BaseBlock:
-    def __init__(self, info: BlockInfo):
+class Block:
+    def __init__(self, info: BlockInfo, args: List["BaseBlock"]):
         self.info = info
         self.interpreter = load_interpreter(self.info)
+        self.args = BlockArgs(args)
+
+

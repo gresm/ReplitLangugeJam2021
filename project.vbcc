@@ -1,0 +1,18 @@
+!!IO
+!!MEMORY
+!!VBCCGAME
+!!MATH
+
+["main" x=0 y=0]
+IO.printConsole["IO.getConsole['a']"]
+IO.getConsole
+
+MEMORY.setStringVariable['a', getConsole['Halo?']]
+
+[] - bolck
+MATH.pow[
+  ..[],
+  ..[]
+]
+
+

@@ -1,2 +1,2 @@
 from .base_block import BlockInfo
-from .base_block import BaseBlock
+from .base_block import Block
