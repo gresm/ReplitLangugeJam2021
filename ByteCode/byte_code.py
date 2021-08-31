@@ -5,7 +5,7 @@ from Tools import BiDirectionalList
 
 class ByteCodeInterpreter:
     def __init__(self, settings: "ByteCodeSettings", external_handlers: "ByteCodeExternalHandlers",
-                code: Union[bytes, List[int]]):
+                 code: Union[bytes, List[int]]):
         self.settings = settings
         self.settings.interpreter = self
 

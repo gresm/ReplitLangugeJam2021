@@ -9,7 +9,7 @@ IO.getConsole
 
 MEMORY.setStringVariable['a', getConsole['Halo?']]
 
-[] - bolck
+[] - block
 MATH.pow[
   ..[],
   ..[]

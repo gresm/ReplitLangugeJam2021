@@ -1,5 +1,5 @@
 from . import byte_code as bc
-from BlocksParser import BlockInfo
+from BlocksParser import BlockInfo, BlockArgs
 
 
 def load_settings(block_settings: BlockInfo) -> bc.ByteCodeSettings:
@@ -17,3 +17,7 @@ def load_external_handlers(block_settings: BlockInfo) -> bc.ByteCodeExternalHand
 def load_interpreter(block_settings: BlockInfo) -> bc.ByteCodeInterpreter:
     return bc.ByteCodeInterpreter(bc.ByteCodeSettings(), load_external_handlers(block_settings),
                                   block_settings.byte_code)
+
+
+def update_interpreter(interpreter: bc.ByteCodeInterpreter, args: BlockArgs):
+    pass

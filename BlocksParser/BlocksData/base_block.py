@@ -1,5 +1,5 @@
-from typing import List, Union, Dict
-from ByteCode import load_interpreter
+from typing import List, Union, Dict, Sequence, TypeVar, Type
+from ByteCode import load_interpreter, update_interpreter
 from Tools import util
 
 
@@ -27,23 +27,40 @@ class BlockExtension:
             self.failed_to_load = True
 
 
+_T = TypeVar("_T", bound=type)
+
+
+class ArgValue:
+    def __init__(self, real_type: Union[Type[_T], type], real_value: Union[_T, object]):
+        assert isinstance(real_value, real_type)
+        self.real_type = real_type
+        self.real_value = real_value
+
+    def get(self):
+        return self.real_value
+
+
+class StringValue(ArgValue):
+    def __init__(self, real_value: str):
+        super().__init__(str, real_value)
+
+
 class BlockArg:
-    def __init__(self, block_type):
-        self.block_type = block_type
+    def __init__(self, arg_value: ArgValue):
+        self.arg_value = arg_value
+
+    def get_val(self):
+        return self.arg_value.get()
 
 
 class BlockArgs:
-    def __init__(self, args):
-        pass
+    def __init__(self, args: Sequence[BlockArg]):
+        self.args = args
 
-        
-    def get(self):
-        args = []
-        for block in self.args:
-            args.append(block.get())
-        return self.logic(args)
+    def __getitem__(self, index: Union[int, slice]):
+        return self.args[index]
 
-
+    get = __getitem__
 
 
 class BlockInfo:
@@ -60,7 +77,7 @@ class BlockInfo:
 class Block:
     def __init__(self, info: BlockInfo, args: List["BaseBlock"]):
         self.info = info
+        self.args = args
         self.interpreter = load_interpreter(self.info)
-        self.args = BlockArgs(args)
-
+        update_interpreter(self.interpreter, self.args)
 
