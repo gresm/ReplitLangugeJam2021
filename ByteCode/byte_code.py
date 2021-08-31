@@ -4,9 +4,14 @@ from Tools import BiDirectionalList
 
 
 class ByteCodeInterpreter:
-    def __init__(self, settings: "ByteCodeSettings", external_handlers: "ByteCodeExternalHandlers", code: bytes):
+    def __init__(self, settings: "ByteCodeSettings", external_handlers: "ByteCodeExternalHandlers",
+                 code: Union[bytes, List[int]]):
         self.settings = settings
+        self.settings.interpreter = self
+
         self.external_handlers = external_handlers
+        self.external_handlers.interpreter = self
+
         self.code: List[int] = list(code)
         self.current_pos: int = 0
         self.current_command = -1
@@ -78,7 +83,8 @@ class ByteCodeInterpreter:
 
 
 class ByteCodeSettings:
-    pass
+    def __init__(self, interpreter: ByteCodeInterpreter = None):
+        self.interpreter = interpreter
 
 
 class ByteCodeException:
@@ -179,7 +185,7 @@ class ByteCodeObjectClass(ByteCodeObject):
 
 
 class ByteCodeExternalHandlers:
-    def __init__(self, interpreter: ByteCodeInterpreter):
+    def __init__(self, interpreter: ByteCodeInterpreter = None):
         self.handlers: Set["ExternalHandler"] = set()
         self.interpreter = interpreter
 
@@ -199,11 +205,11 @@ class ExternalHandler:
         self.access_to_interpreter = access_to_interpreter
         self.sub_thread = sub_thread
         self.api = ExternalHandlerApi(self.interpreter if self.access_to_interpreter else None)
-        self.handler_globals = {"api": self.api}
+        self.handler_locals = {"api": self.api}
 
     def handler_exec(self):
         if len(self.api.tasks):
-            exec(self.exec_code, self.handler_globals, {})
+            exec(self.exec_code, None, self.handler_locals)
 
     def run(self):
         if self.sub_thread:
@@ -221,7 +227,7 @@ class ExternalHandlerApi:
         self.interpreter = interpreter
         self.tasks: List[Sequence[int]] = []
 
-    def get_next(self) -> Union[Sequence[int], bool]:
+    def get_task(self) -> Union[Sequence[int], bool]:
         return self.tasks[0] if len(self.tasks) else False
 
     def add_task(self, info: Sequence[int]):
