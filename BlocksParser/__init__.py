@@ -1,1 +1,1 @@
-from .BlocksData import BaseBlock, BlockInfo
+from .BlocksData import *

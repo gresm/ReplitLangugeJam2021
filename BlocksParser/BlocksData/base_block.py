@@ -45,6 +45,17 @@ class StringValue(ArgValue):
         super().__init__(str, real_value)
 
 
+class NumberValue(ArgValue):
+    def __init__(self, real_value: Union[int, float]):
+        super().__init__(float, float(real_value))
+
+
+class BlockValue(ArgValue):
+    def __init__(self, real_value: "Block", expected_value: _T):
+        super().__init__(Block, real_value)
+        self.expected_value = expected_value
+
+
 class BlockArg:
     def __init__(self, arg_value: ArgValue):
         self.arg_value = arg_value
@@ -75,7 +86,7 @@ class BlockInfo:
 
 
 class Block:
-    def __init__(self, info: BlockInfo, args: List["BaseBlock"]):
+    def __init__(self, info: BlockInfo, args: BlockArgs):
         self.info = info
         self.args = args
         self.interpreter = load_interpreter(self.info)
